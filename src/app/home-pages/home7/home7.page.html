@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-menu-button slot="start">
+      <ion-icon name="menu"></ion-icon>
+    </ion-menu-button>
+    <ion-title>
+      <ion-img src="assets/logo_header-4.png" alt="logo"></ion-img>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/search" routerDirection="forward">
+        <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" routerLink="/cart" routerDirection="forward">
+        <ion-icon name="basket"></ion-icon>
+        <ion-badge color="secondary">{{shared.cartTotalItems()}}</ion-badge>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollEvents]="true" (ionScroll)="onScroll($event)">
+
+  <app-banner></app-banner>
+  <!-- categories component -->
+  <app-categories [type]="'name&count'"></app-categories>
+
+  <ion-segment [(ngModel)]="segments">
+    <ion-segment-button value="deals">{{ 'On Sale' | translate }} </ion-segment-button>
+    <ion-segment-button value="mostLiked"> {{ 'Featured' | translate }}</ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="segments">
+    <ion-grid class="ion-no-padding" *ngSwitchCase="'deals'">
+      <ion-row class="row-segment ion-no-padding">
+        <ion-col *ngFor="let p of shared.tab2" size="6" class="ion-no-padding">
+          <app-product [data]="p" [type]="'normal'"></app-product>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-grid class="ion-no-padding" *ngSwitchCase="'mostLiked'">
+      <ion-row class="ion-no-padding">
+        <ion-col *ngFor="let p of shared.tab3" size="6" class="ion-no-padding">
+          <app-product [data]="p" [type]="'normal'"></app-product>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+ 
+  <ion-infinite-scroll *ngIf="segments === 'deals'" #infinitel (ionInfinite)="getSaleProducts()">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <ion-infinite-scroll *ngIf="segments === 'mostLiked'" #infinitef (ionInfinite)="getFeaturedProducts()">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end" *ngIf="scrollTopButton">
+  <ion-fab-button color="tertiary" (click)="scrollToTop()">
+    <ion-icon name="arrow-up"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
